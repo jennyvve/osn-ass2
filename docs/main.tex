@@ -77,13 +77,13 @@ Table \ref{tab:mmu_comparison} shows the results for a single process.
 \centering
 \caption{Single process results of RISC-V Sv48 and Simple MMU Implementations for trace: gcc.txt.gz.}
 \label{tab:mmu_comparison}
-    \begin{tabular}{lrr} % Removed the pipes | | |
+    \begin{tabular}{lrr} 
         \toprule
         \textbf{Metric} & \textbf{RISC-V (Sv48)} & \textbf{Simple (Single-Level)} \\ \midrule
-        Page Size & 4 KB & 64 MB \\
-        Page Table Allocated & 36 KiB & 64 MiB \\
-        Handled Page Faults & 6 & 4 \\
-        Max. Allocated Physical Pages & 15 & 5 \\
+        Page size & 4 KB & 64 MB \\
+        Page table allocated & 36 KiB & 64 MiB \\
+        Handled page faults & 6 & 4 \\
+        Max. \# allocated physical pages & 15 & 5 \\
     \end{tabular}
 \end{table}
 
@@ -94,10 +94,10 @@ Table \ref{tab:mmu_comparison} shows the results for a single process.
     \begin{tabular}{lrr}
     \toprule
     \textbf{Metric} & \textbf{RISC-V (Sv48)} & \textbf{Simple (Single-Level)} \\ \midrule
-    Page Size & 4 KB & 64 MB \\
-    Page Table Allocated & 68 KiB & 128 MiB \\
-    Handled Page Faults & 11 & 7 \\
-    Max. Allocated Physical Pages & 28 & 8 \\
+    Page size & 4 KB & 64 MB \\
+    Page table allocated & 68 KiB & 128 MiB \\
+    Handled page faults & 11 & 7 \\
+    Max. \# allocated physical pages & 28 & 8 \\
     \end{tabular}
 \end{table}
 
