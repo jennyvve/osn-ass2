@@ -1,4 +1,8 @@
 **/*.o
 pagetables
-tests/phymemmanager
+tests/physmemmanager
 tests/simple
+1
+*.txt
+tests/risv
+traces/

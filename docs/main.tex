@@ -1,0 +1,109 @@
+%Het juiste bestandstype
+\documentclass[a4paper,reqno,10pt]{article}
+
+%Deze marges zijn aan te passen
+\usepackage[a4paper,
+            left=1.5in,right=1.5in,top=1.5in,bottom=1.5in,%
+            ]{geometry}
+
+%Een aantal veelgebruikte pakketten
+\usepackage[dutch]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{mathabx}
+\usepackage{enumerate}
+\usepackage{bbm}
+\usepackage{hyperref}
+\usepackage{verbatim}
+\usepackage{float}
+\usepackage{placeins}
+
+%Spacing tussen paragrafen
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+
+%Eigen commando's
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+
+%Vergelijkingen worden binnen een sectie genummerd
+\numberwithin{equation}{subsection}
+
+%Opmaak voor stellingen e.d.
+\theoremstyle{plain}
+\newtheorem{stelling}{Stelling}[section]
+\newtheorem{propositie}[stelling]{Propositie}
+\newtheorem{lemma}[stelling]{Lemma}
+\newtheorem{gevolg}[stelling]{Gevolg}
+
+\theoremstyle{definition}
+\newtheorem{opmerking}[stelling]{Opmerking}
+\newtheorem{opgave}[stelling]{Opgave}
+\newtheorem{feit}[stelling]{Feit}
+\newtheorem{definitie}[stelling]{Definitie}
+\newtheorem{voorbeeld}[stelling]{Voorbeeld}
+\newtheorem{algoritme}[stelling]{Algoritme}
+\newtheorem{notatie}[stelling]{Notatie}
+\newtheorem{resultaat}[stelling]{Resultaat}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\sisetup{output-decimal-marker={,}} % Komma i.p.v. punt
+
+
+\begin{document}
+\title{OSN2526: Assignment 2: Page tables}
+\author{Jenny Vermeltfoort}
+
+\maketitle
+
+\section{Inleiding}
+This report describes an analysis of different virtual memory implementations. In Section \ref{sec:task1} a comparative analysis is performerd between a simple single level MMU and a RISC-V Sv48 MMU. Both MMU are simulated within the provided framework given for the assignment. 
+
+
+\section{MMU Comparison}
+\label{sec:task1}
+This section performes a comparative analysis of a simple single level MMU provided for the assignment and a RISC-V Sv48 MMU implementation.
+
+Table \ref{tab:mmu_comparison} shows the results for a single process. 
+
+\begin{table}[h]
+\centering
+\caption{Single process results of RISC-V Sv48 and Simple MMU Implementations for trace: gcc.txt.gz.}
+\label{tab:mmu_comparison}
+    \begin{tabular}{lrr} % Removed the pipes | | |
+        \toprule
+        \textbf{Metric} & \textbf{RISC-V (Sv48)} & \textbf{Simple (Single-Level)} \\ \midrule
+        Page Size & 4 KB & 64 MB \\
+        Page Table Allocated & 36 KiB & 64 MiB \\
+        Handled Page Faults & 6 & 4 \\
+        Max. Allocated Physical Pages & 15 & 5 \\
+    \end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Multiprocess results of RISC-V Sv48 vs. Simple MMU (gcc.txt.gz and ls.txt.gz)}
+\label{tab:mmu_comparison_updated}
+    \begin{tabular}{lrr}
+    \toprule
+    \textbf{Metric} & \textbf{RISC-V (Sv48)} & \textbf{Simple (Single-Level)} \\ \midrule
+    Page Size & 4 KB & 64 MB \\
+    Page Table Allocated & 68 KiB & 128 MiB \\
+    Handled Page Faults & 11 & 7 \\
+    Max. Allocated Physical Pages & 28 & 8 \\
+    \end{tabular}
+\end{table}
+
+\section{Conclusie}
+
+
+
+
+\end{document}
