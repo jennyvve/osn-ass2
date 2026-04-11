@@ -82,8 +82,8 @@ Table \ref{tab:mmu_comparison} shows the results for a single process and Table 
         Metric & RISC-V (Sv48) & Simple (Single-Level) & Difference \\ \midrule
         Page size & 4 KB & 64 MB & - \\
         Page table allocated & 36 KiB & 64 MiB & 67 MB \\
-        Handled page faults & 6 & 4 & 2 \\
-        Max. \# allocated physical pages & 15 & 5 & 10 \\
+        Handled page faults & 246 & 4 & 2 \\
+        Max. \# allocated physical pages & 237 & 5 & 10 \\
     \end{tabular}
 \end{table}
 
@@ -96,14 +96,14 @@ Table \ref{tab:mmu_comparison} shows the results for a single process and Table 
     Metric & RISC-V (Sv48) & Simple (Single-Level) & Difference \\ \midrule
     Page size & 4 KB & 64 MB & - \\
     Page table allocated & 68 KiB & 128 MiB &  134 MB \\
-    Handled page faults & 11 & 7 & 4 \\
-    Max. \# allocated physical pages & 28 & 8 & 20 \\
+    Handled page faults & 479 & 7 & 4 \\
+    Max. \# allocated physical pages & 488 & 8 & 20 \\
     \end{tabular}
 \end{table}
 
 These results nicely capture the impact of using a RADIX tree to manage the virtual memory translation. For a single level table each store of a physical memory is accompanied by a 64 MB page size allocation. When we have two physical addresses which are further apart than the size of the page the amount of bytes allocated easily duplicates. For the multilevel RISC-V Sv48, this issue is not as severe since the pages are only of size 4 KB. When a fragmented access occurs the relative allocation overhead is much less. This can be seen in the results, the Sv48 implementation allocates 36 KiB for a single process compared to 64MiB for the single level implementation. Another memory efficiency is captured by the multiprocess results, each process only has to allocate per 4KB chunks for the Sv48 implementation.
 
-This does go at the cost of some performance. The implementation of the Sv48 is more complex, it needs to go through a couple of stages/levels to retrieve the physical address. Also, since the page size is lower it covers less physical address space, thus increase the amount of page faults.
+This does go at the cost of some performance. The implementation of the Sv48 is more complex, it needs to go through a couple of stages/levels to retrieve the physical address. Also, since the page size is lower it covers less physical address space, thus increases the amount of page faults.
 
 \section{Conclusie}
 
