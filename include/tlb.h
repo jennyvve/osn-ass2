@@ -15,6 +15,7 @@ struct TLBStatistics {
     int lookups; /* Amount of lookups */
     int hits;    /* Amount of hits */
 
+    int population;
     int addEvictions; /* Amount of evictions due to add */
 
     int flushes;        /* Amount of flushes */

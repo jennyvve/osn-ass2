@@ -16,7 +16,7 @@ namespace RISCV {
 /* Length of a virtual address, in bits. */
 const static uint64_t addressBits = 48;
 const static uint64_t tblLevels = 4;
-const static int vpnBits = addressBits / tblLevels;
+const static int vpnBits = 9;
 
 /* The page size is always a power of 2: (2^pageBits). */
 const static uint64_t pageBits = 12; /* 4 KiB / page */

@@ -23,7 +23,8 @@ OSKernel::OSKernel(Processor &processor, MMUDriver &driver,
       processList(processList),
       current(nullptr),
       nPageFaults(0),
-      nContextSwitches(0) {
+      nContextSwitches(0),
+      memoryMapProcess() {
     driver.setHostKernel(this);
 
     /* Initialize physical memory manager. */
@@ -111,6 +112,8 @@ void *OSKernel::allocateMemory(size_t size, uint64_t align) {
         throw std::runtime_error(
             "Cannot allocate memory: memory full.");
 
+    memoryMapProcess[current->getPID()].push_back({addr, size});
+
     return (void *)addr;
 }
 
@@ -134,10 +137,18 @@ void OSKernel::terminateProcess(const PID proc) {
     std::cerr << "KERNEL: process " << proc << " has finished."
               << std::endl;
 
-    /* TODO: release all physical pages allocated by this process. */
-
     /* Ask driver to release page tables */
     driver.releasePageTable(proc);
+
+    // Release the pages for process.
+    auto it = memoryMapProcess.find(proc);
+    if (it != memoryMapProcess.end()) {
+        for (auto &alloc : it->second) {
+            releaseMemory(reinterpret_cast<void *>(alloc.first),
+                          alloc.second);
+        }
+        memoryMapProcess.erase(it);
+    }
 }
 
 /* Page fault handler (called by the MMU when a page fault occurs).
@@ -154,6 +165,9 @@ void OSKernel::pageFaultHandler(const uint64_t faultAddr) {
     PhysPage pPage;
     if (not manager->allocatePages(1, pPage.addr))
         throw std::runtime_error("Physical memory full.");
+
+    memoryMapProcess[current->getPID()].push_back(
+        {pPage.addr, driver.getPageSize()});
 
     pPage.pid = current->getPID();
     driver.setMapping(current->getPID(), vAddr, pPage);

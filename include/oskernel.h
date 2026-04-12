@@ -5,27 +5,27 @@
 
 #ifndef __OSKERNEL_H__
 #define __OSKERNEL_H__
+#include <map>
+#include <utility>
 
-#include "processor.h"
 #include "process.h"
+#include "processor.h"
 
 class OSKernel;
 class PhysMemManager;
 
 /* Structure representing a physical page allocated to a process. */
-struct PhysPage
-{
-  PID pid;
-  uintptr_t addr; /* Full address of physical page. */
+struct PhysPage {
+    PID pid;
+    uintptr_t addr; /* Full address of physical page. */
 };
 
 /*
  * MMU driver (software part).
  */
 
-class MMUDriver
-{
-  public:
+class MMUDriver {
+   public:
     MMUDriver();
     virtual ~MMUDriver();
 
@@ -41,43 +41,46 @@ class MMUDriver
     /* Release the page table associated with the process @proc. */
     virtual void releasePageTable(const PID proc) = 0;
 
-    /* Returns the root of the page table associated with the process @proc. */
+    /* Returns the root of the page table associated with the process
+     * @proc. */
     virtual uintptr_t getPageTable(const PID proc) = 0;
 
-    /* Create a new mapping for the process @proc, mapping the virtual address
+    /* Create a new mapping for the process @proc, mapping the virtual
+     * address
      *  @vAddr to the physical page @pPage. */
-    virtual void setMapping(const PID proc,
-                            uintptr_t vAddr,
+    virtual void setMapping(const PID proc, uintptr_t vAddr,
                             PhysPage &pPage) = 0;
 
     /* Returns the number of bytes allocated for the page table. */
-    virtual uint64_t  getBytesAllocated(void) const = 0;
+    virtual uint64_t getBytesAllocated(void) const = 0;
 };
 
-/* The OS kernel is only concerned with allocating physical memory and creating
- * page table mappings in response to page faults. We do not deal with page
- * permissions, virtual address space maps, and so on to keep things simple.
+/* The OS kernel is only concerned with allocating physical memory and
+ * creating page table mappings in response to page faults. We do not
+ * deal with page permissions, virtual address space maps, and so on
+ * to keep things simple.
  */
-class OSKernel
-{
-  protected:
+class OSKernel {
+   protected:
     std::unique_ptr<PhysMemManager> manager;
     Processor &processor;
     MMUDriver &driver;
 
     ProcessList &processList;
+
     std::shared_ptr<Process> current;
 
     int nPageFaults;
     int nContextSwitches;
 
     void logPageFault(const uint64_t faultAddr);
-    void logPageMapping(const uint64_t vAddr,
-                        const uint64_t pAddr);
+    void logPageMapping(const uint64_t vAddr, const uint64_t pAddr);
+    std::map<uintptr_t, std::vector<std::pair<size_t, size_t>>>
+        memoryMapProcess;
 
-  public:
-    OSKernel(Processor &processor, MMUDriver &driver, uint64_t memorySize,
-             ProcessList &processList);
+   public:
+    OSKernel(Processor &processor, MMUDriver &driver,
+             uint64_t memorySize, ProcessList &processList);
     virtual ~OSKernel();
 
     void *allocateMemory(size_t size, uint64_t align);

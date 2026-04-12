@@ -6,12 +6,13 @@
 #ifndef __PHYSMEMMANAGER_H__
 #define __PHYSMEMMANAGER_H__
 
+#include <cstddef>
+#include <vector>
+
 #include "settings.h"
 
-#include <vector>
-#include <cstddef>
-
-/* We assume that the RAM starts at 16GiB in the physical address space.
+/* We assume that the RAM starts at 16GiB in the physical address
+ * space.
  */
 const static uint64_t physMemBase = 16UL * 1024 * 1024 * 1024;
 
@@ -19,9 +20,8 @@ const static uint64_t physMemBase = 16UL * 1024 * 1024 * 1024;
  * Physical memory manager, base class.
  */
 
-class PhysMemManager
-{
-  protected:
+class PhysMemManager {
+   protected:
     void *baseAddress;
     const uint64_t pageSize;
     const uint64_t memorySize;
@@ -30,8 +30,9 @@ class PhysMemManager
     uint64_t nAllocatedPages;
     uint64_t maxAllocatedPages;
 
-  public:
-    PhysMemManager(const uint64_t pageSize, const uint64_t memorySize);
+   public:
+    PhysMemManager(const uint64_t pageSize,
+                   const uint64_t memorySize);
     virtual ~PhysMemManager();
 
     virtual bool allocatePages(size_t count, uintptr_t &addr) = 0;
@@ -48,13 +49,13 @@ class PhysMemManager
  * Physical memory manager, bitmap version.
  */
 
-class PhysMemManagerBitmap: public PhysMemManager
-{
-  protected:
+class PhysMemManagerBitmap : public PhysMemManager {
+   protected:
     std::vector<bool> allocated;
 
-  public:
-    PhysMemManagerBitmap(const uint64_t pageSize, const uint64_t memorySize);
+   public:
+    PhysMemManagerBitmap(const uint64_t pageSize,
+                         const uint64_t memorySize);
 
     bool allocatePages(size_t count, uintptr_t &addr);
     void releasePages(uintptr_t addr, size_t count);
@@ -64,16 +65,35 @@ class PhysMemManagerBitmap: public PhysMemManager
  * Physical memory manager, hole list version.
  */
 
-class PhysMemManagerHole: public PhysMemManager
-{
-  protected:
-    /* TODO: Add data structures necessary for hole list. */
+class PhysMemManagerHole : public PhysMemManager {
+   protected:
+    struct HoleNode {
+        size_t page;
+        size_t count;
+        bool allocated = false;
+        HoleNode *prev = nullptr;
+        HoleNode *next = nullptr;
+        HoleNode(size_t _page, size_t _count)
+            : page(_page), count(_count) {}
+        ~HoleNode() {}
 
-  public:
-    PhysMemManagerHole(const uint64_t pageSize, const uint64_t memorySize);
+        HoleNode(const HoleNode &) = delete;
+        HoleNode &operator=(const HoleNode &) = delete;
+    };
+
+    HoleNode *root = nullptr;
+
+   public:
+    PhysMemManagerHole(const uint64_t pageSize,
+                       const uint64_t memorySize);
+    ~PhysMemManagerHole();
 
     bool allocatePages(size_t count, uintptr_t &addr);
     void releasePages(uintptr_t addr, size_t count);
+
+    PhysMemManagerHole(const PhysMemManagerHole &) = delete;
+    PhysMemManagerHole &operator=(const PhysMemManagerHole &) =
+        delete;
 };
 
 #endif /* __PHYSMEMMANAGER_H__ */

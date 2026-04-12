@@ -7,8 +7,6 @@
 
 #include "mmu.h"
 
-/* TODO: Implement the TLB. */
-
 TLB::TLB(const MMU &mmu, const size_t max)
     : mmu(mmu), max(max), stats() {
     storage = new TableEntry[max];
@@ -43,6 +41,7 @@ void TLB::add(const uint64_t vPage, const uint64_t pPage) {
         storage[population].valid = true;
         storage[population].asid = asid;
         population++;
+        stats.population++;
         return;
     }
 
@@ -70,6 +69,7 @@ void TLB::flush(void) {
     stats.flushes++;
     stats.flushEvictions += population;
     population = 0;
+    stats.population = 0;
 }
 
 /* Set the currently active ASID to @asid.

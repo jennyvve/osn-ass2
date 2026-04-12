@@ -1,4 +1,3 @@
-%Het juiste bestandstype
 \documentclass[a4paper,reqno,10pt]{article}
 
 %Deze marges zijn aan te passen
@@ -7,7 +6,7 @@
             ]{geometry}
 
 %Een aantal veelgebruikte pakketten
-\usepackage[dutch]{babel}
+\usepackage[english]{babel}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -53,9 +52,11 @@
 \newtheorem{resultaat}[stelling]{Resultaat}
 \usepackage{booktabs}
 \usepackage{siunitx}
-
+\usepackage{float}
+\usepackage{multirow}
 \sisetup{output-decimal-marker={,}} % Komma i.p.v. punt
-
+\usepackage{pgfplots}
+\usepackage{tikz}
 
 \begin{document}
 \title{OSN2526: Assignment 2: Page tables}
@@ -101,13 +102,112 @@ Table \ref{tab:mmu_comparison} shows the results for a single process and Table 
     \end{tabular}
 \end{table}
 
-These results nicely capture the impact of using a RADIX tree to manage the virtual memory translation. For a single level table each store of a physical memory is accompanied by a 64 MB page size allocation. When we have two physical addresses which are further apart than the size of the page the amount of bytes allocated easily duplicates. For the multilevel RISC-V Sv48, this issue is not as severe since the pages are only of size 4 KB. When a fragmented access occurs the relative allocation overhead is much less. This can be seen in the results, the Sv48 implementation allocates 36 KiB for a single process compared to 64MiB for the single level implementation. Another memory efficiency is captured by the multiprocess results, each process only has to allocate per 4KB chunks for the Sv48 implementation.
+These results nicely capture the impact of using a RADIX tree to manage the virtual memory translation. For a single level table each store of a physical memory is accompanied by a 64 MB page size allocation. When we have two physical addresses which are further apart than the size of the page the amount of bytes allocated easily duplicates. For the multilevel RISC-V Sv48, this issue is not as severe since the pages are only of size 4 KB. When a fragmented access occurs the relative allocation overhead is much less. This can be seen in the results, the Sv48 implementation allocates 36 KiB for a single process compared to 64MiB for the single level implementation. 
 
-This does go at the cost of some performance. The implementation of the Sv48 is more complex, it needs to go through a couple of stages/levels to retrieve the physical address. Also, since the page size is lower it covers less physical address space, thus increases the amount of page faults.
+The multiprocess results show improved efficiency for the Sv48 implementation, each virtual table per process has only 4KB in size compared to the 64MB per process for the single level implementation. This does go at the cost of some performance. The implementation of the Sv48 is more complex, it needs to go through a couple of stages/levels to retrieve the physical address. Also, since the page size is lower it covers less physical address space, thus the amount of page faults increases.
+
+\section{TLB Comparison}
+A TLB (Translation Lookaside Buffer) is a method that caches the entries of the virtual page table to reduce memory latency. An entry within the TLB relates a tag, usually the virtual page number, to a physical address. In subsection \ref{sec:tlb_size} an analysis of the effectiveness of the size of the TLB is given; in the subsection \ref{sec:tlb_asid} the performance of the TLB for multiprocesses using an ASID implementation is analysed.
+
+\subsection{Size analysis}
+\label{sec:tlb_size}
+The table below depicts the results for a couple of different TLB configurations. The highest TLB size is chosen to be 64 entries since Intel's Nehalem microarchitecture simularly has a 64 entry 4 KiB page TLB. With this analysis and simulation its best to capture a scenario that best represents actual hardware.
+
+In this analysis it is of interest where the tipping point of the size of the TLB lies in relation to the performance; performance in this case the hit rate for different applications. Each application might have a different memory access pattern, it is therefore of interest to relate the results of multiple applications to any conclusion derived from the results. As a disclaimer the simulation of this experiment does not implement the ASID selector, meaning for each context switch within the processor the TLB is flushed.
+
+Results are depicted in Table \ref{tab:tlb_results}. 
+\begin{table}[h]
+  \centering
+  \caption{TLB Hit Rates by Size and Trace}
+  \label{tab:tlb_results}
+  \begin{tabular}{lrrrrr}
+    \toprule
+    Trace File & TLB=4 & TLB=8 & TLB=16 & TLB=32 & TLB=64 \\
+    \midrule
+    cxx.txt.gz & 91.07\% & 93.80\% & 98.86\% & 99.66\% & 99.87\% \\
+    gcc.txt.gz & 91.94\% & 94.66\% & 98.83\% & 99.62\% & 99.87\% \\
+    ls.txt.gz & 91.63\% & 96.10\% & 97.83\% & 99.17\% & 99.80\% \\
+    make.txt.gz & 89.67\% & 94.23\% & 97.52\% & 99.06\% & 99.84\% \\
+    small-reclaim.txt.gz & 92.02\% & 96.03\% & 97.81\% & 99.51\% & 99.80\% \\
+    small.txt.gz & 92.02\% & 96.03\% & 97.81\% & 99.52\% & 99.81\% \\
+    combined (all) & 90.33\% & 94.37\% & 97.53\% & 98.44\% & 98.82\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\newpage
+What is observable from these results is that all applications receive a performance benefit from a TLB size that is bigger than 32 entries. Where small-reclaim.txt.gz has the smallest improvement of 7.79 \% going from a TLB of size 4 to size 64; simularly the biggest improvement of 10.17 \% occurs with the trace make.txt.gz. See the boxplot in Figure \ref{fig:pg_4_64} for a visual presentation of the average performance gain over all rows of Table \ref{tab:tlb_results}.
+
+\FloatBarrier
+
+\begin{figure}[h]
+\includegraphics[width=1.0\textwidth]{pg_4_64.png}
+\caption{Boxplot of the average performance gain going from TLB=4 to TLB=64.}
+\label{fig:pg_4_64}
+\end{figure}
+
+Another observation is going from a TLB of size 32 to a TLB of size 64 has a limited effect on the hit rate, depicted in Figure \ref{fig:pg_32_64}, with an average gain of roughly 0.4\%.
+
+\FloatBarrier
+\begin{figure}[h]
+\includegraphics[width=1.0\textwidth]{pg_32_64.png}
+\caption{Boxplot of the average performance gain going from TLB=32 to TLB=64.}
+\label{fig:pg_32_64}
+\end{figure}
+
+\subsection{ASID analysis}
+\label{sec:tlb_asid}
+The table below contains the results for the simulation on different configurations of traces with and without ASID. As shown in Figure \ref{fig:pg_asid} there is a 0.6 \% average gain in hit rate.
+
+\begin{table}[h]
+  \centering
+  \caption{TLB hit rate comparison: Flushing vs. ASID}
+  \label{tab:asid_results}
+  \begin{tabular}{lrr}
+    \toprule
+    Workload Configuration & Flushing & ASID \\
+    \midrule
+    cxx.txt.gz + ls.txt.gz & 98.6369\% & 99.6405\% \\
+    cxx.txt.gz + ls.txt.gz + make.txt.gz & 98.9326\% & 99.5261\% \\
+    All\textsuperscript{*} & 98.8153\% & 99.1680\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\footnotetext{* Combination of: cxx, gcc, ls, make, small-reclaim, and small traces.}
+
+\begin{figure}[h]
+\includegraphics[width=1.0\textwidth]{pg_asid.png}
+\caption{Boxplot of the average performance gain using ASID compared to Flushing.}
+\label{fig:pg_asid}
+\end{figure}
 
 \section{Conclusie}
 
 
 
+
+\begin{figure}[h]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      xlabel={TLB Size},
+      ylabel={Hit Rate (\%)},
+      title={TLB Hit Rate for make.txt.gz},
+      xmin=2, xmax=35,
+      ymin=85, ymax=102,
+      xtick={4, 8, 16, 32},
+      line width=1pt,
+    ]
+      \addplot[color=black, mark=x, mark size=3pt] coordinates {
+        (4, 89.665)
+        (8, 94.2311)
+        (16, 97.5237)
+        (32, 99.0648)
+      };
+    \end{axis}
+  \end{tikzpicture}
+  \caption{TLB Hit Rate vs TLB Size for make.txt.gz}
+  \label{fig:tlb_make}
+\end{figure}
 
 \end{document}
