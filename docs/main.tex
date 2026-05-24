@@ -64,7 +64,7 @@
 
 \maketitle
 
-\section{Inleiding}
+\section{Introduction}
 This report describes an analysis of different virtual memory implementations. In Section \ref{sec:task1} a comparative analysis is performerd between a simple single level MMU and a RISC-V Sv48 MMU. Both MMU are simulated within the provided framework given for the assignment. 
 
 
@@ -181,33 +181,6 @@ The table below contains the results for the simulation on different configurati
 \label{fig:pg_asid}
 \end{figure}
 
-\section{Conclusie}
 
-
-
-
-\begin{figure}[h]
-  \centering
-  \begin{tikzpicture}
-    \begin{axis}[
-      xlabel={TLB Size},
-      ylabel={Hit Rate (\%)},
-      title={TLB Hit Rate for make.txt.gz},
-      xmin=2, xmax=35,
-      ymin=85, ymax=102,
-      xtick={4, 8, 16, 32},
-      line width=1pt,
-    ]
-      \addplot[color=black, mark=x, mark size=3pt] coordinates {
-        (4, 89.665)
-        (8, 94.2311)
-        (16, 97.5237)
-        (32, 99.0648)
-      };
-    \end{axis}
-  \end{tikzpicture}
-  \caption{TLB Hit Rate vs TLB Size for make.txt.gz}
-  \label{fig:tlb_make}
-\end{figure}
 
 \end{document}

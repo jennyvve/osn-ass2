@@ -1,0 +1,265 @@
+\documentclass[a4paper]{scrartcl}
+
+\usepackage{proposal}
+\usepackage{babel}
+\usepackage[
+  style=alphabetic, %% Do not change the style!
+  backend=bibtex    %% You may change this to biber, if you prefer
+]{biblatex}
+\usepackage{lipsum}
+\usepackage{float}
+\newcommand\mytitle{Synthetic computability for G\"odel-Rosser's incompleteness; a generalization for arithmetic axiomized systems.}
+\usepackage[pdfauthor={Names},pdftitle={\mytitle}]{hyperref}
+
+%% hyperref and cleveref must be loaded in this order as last packages!
+\usepackage{hyperref}
+% References
+\usepackage{cleveref}
+\usepackage{placeins}
+\usepackage{comment}
+
+\addbibresource{proposal.bib}
+
+% Set your data here.
+\SetTitleAndGroup{%
+  \mytitle%
+}{%
+ %
+}{%
+  authors
+}
+\begin{comment}
+    Jarco - 7,8
+    Jenny - 1,2,3,5
+    Casper -  4,6
+\end{comment}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+This proposal sets out to prepare the execution of our research extending the work of Dominik Kirst and Benjamin Peters in their expository paper: "\textit{Gödel’s Theorem Without Tears Essential Incompleteness in Synthetic Computability.}"\cite{kirst_et_al:LIPIcs.CSL.2023.30,} 
+
+\section{Paper summary}
+\label{sec:summary}
+% Needs to be to the point and understandable for non-experts in the research
+% area of the proposal.
+
+Gödel's First Incompleteness theorem states that any sufficiently strong axiomatic system over $\mathbb{N}$ that is $\omega$-consistent will contain propositions that can't be proven. Rosser's later addition strengthened the theorem to systems that are simple consistent. Kirst and Peters use a synthetic computability argument for the mechanization of the Gödel-Rosser theorem.\cite{kirst_et_al:LIPIcs.CSL.2023.30} Their approach uses Kleene's ideas and is further simplified by the use of Church's thesis. The theorems of the paper are fully self-enclosed; meaning that constructed type theory, synthetic computability and first order logic are fully defined or described. 
+
+First the authors prove that a formal system and its sound extensions are incomplete when the system weakly represents a problem that is undecidable. A universal function ($EPF$) operating on a piece of code, which enumerates all partial functions, can be used to show an undecidable problem through the self-halting problem with a simple diagonalization argument. Therefore, if a sound formal system weakly represents the self-halting problem, the formal system must be incomplete, since if the formal system were to be sound and complete the self-halting problem would be decidable. This establishes Gödel's incompleteness theorem using a computability argument.
+
+The problem of weak representability is that the formal system is unable to prove contradictions, since it only considers sound sentences. The theorem can be strengthened for formal systems that are consistent by the use Kleene's strong Separation Theory and thereby arriving at the stronger Gödel-Rosser incompleteness. Strong separability can be instantiated using two recursively inseparable problems. Again, using the diagonalization argument over two recursively separated problems which each represent the self-halting problem, it can be shown that the formal system is incomplete if the formal system and any of its extensions strongly separate these two problems.
+
+Second, the authors instantiate a concrete approach to the abstract Gödel-Rosser theorem that preceded this paragraph. Hilbert's 10th problem ($H_{10}$) is proven undecidable by the DPRM theorem and shows that any recursively enumerable set is Diophantine. They define a formal system $\mathcal{A}$ which uses first order arithmetic (Robinson Arithmetic $\mathbf{Q}$). $\mathbf{Q}$ can represent the Diophantine equations; the $EPF_\mu$ can represent recursively enumerable sets, thus deriving that $\mathbf{Q}$ is incomplete through the undecidable property ($H_{10}$); with this they lay a weak foundation that states that $\mathcal{A}$ is incomplete if it weakly represents $H_{10}$, and, if $\mathcal{A}$ is sound. 
+
+%To get to the stronger incompleteness theorem, the authors use the weaker variant of $PA$ called Robinson Arithmetic ($\mathbf{Q}$). $\mathbf{Q}$ is capable of representing all predicates that are both $\sum_1$-closed, and, are represented by a pair of disjoint enumerable predicates which are $\sum_1$-separable. This allow $\mathbf{Q}$ to represent 
+
+
+\FloatBarrier
+\section{Background and research question}
+\label{sec:background-question}
+% It provides sufficient background to understand the research problem.
+% Clearly formulates a research problem as a research question with a clear
+% single goal.
+% The research question must be answerable.
+% The scientific fields for which this project is relevant are identified.
+% It gives convincing arguments that the problem is novel and interesting.
+% All arguments are supported by facts and citations.
+
+
+%The emergence of powerful proof assistants (also known as interactive theorem provers)
+%has been slowly changing the rules of the game and, we argue, the expectation. Using proof
+%assistants, we can reliably keep track of all the constructions and their properties. Proof
+%automation (sometimes achieved through the cooperation between proof assistants and automatic %theorem provers [25, 41]), makes complete, entirely rigorous proofs feasible. And
+%indeed, researchers have successfully met the challenge of mechanizing IT1 [21, 36, 40, 53]
+%and recently IT2 [40]. Besides reassurance, these verification tours de force have brought
+%superior technical insight into the theorems. But they have taken place within the same %solitary confinement of scope as the informal proofs. \cite{popescu} Because Gödel relied on the instantiation of $\mathbf{Q}$ to prove his incompleteness theorem it seems to a trend to use $\mathbf{Q}$ for its mechanizations.\cite{kirst_et_al:LIPIcs.CSL.2023.30}
+
+There is enormous amount of work that already went into the mechanization of Gödel's theorem.  From all the works in mechanization Popescu and Traytel have accumulated a broad set of requirements that are needed to prove Gödel's theorem using proof assistants.\cite{popescu} Kirst' and Peter' are novel in their approach by using Kleene's separability thesis to prove the strong Gödel-Rosser theorem. They note that their instantiation is directly tied to the use of $\mathbf{Q}$ and wonder whether a more abstract instantiation can be derived for a broader range of formal systems. 
+%This is of interest since generalizing the proof without the reliance on Q would make the proof much stronger.
+
+To give an idea of what such a system would look like, the following properties of $\mathbf{Q}$ are relied upon in Kirst and Peters' mechanization: basic arithmetic in the form of addition, multiplication, less than or equal; first-order logic to reason about $\Delta_0$ and $\Sigma_1$ closed formula\footnote{$\mathbf{Q}$ can consistently proof that a formula with following criteria can be true or false: \begin{itemize}
+    \item $\Delta_0$-formulae: formulae that operate on a single free variable.
+    \item $\Sigma_1$-formulae: formulae that operate on existential quantifier.
+\end{itemize}}; $\Sigma_1$-completeness which is used to infer that $EPF_{\mu}$ implies $CT_{Q}$\footnote{Church's thesis over Q, proven by Hermes and Kirst.\cite{hermes_et_al:LIPIcs.FSCD.2022.9}.}.
+
+The usage of the DPRM theorem is a low hanging fruit in the sense that it is already mechanized for $\mathbf{Q}$ by Larchey-Wendling and Forster \cite{larchey}. The DPRM theorem is notable for its complex and hard formalization. Since we want to create a mechanization without $\mathbf{Q}$ we can in parallel avoid the DPRM theorem and directly construct the $\Sigma_1$-representation of $\mu$-recursive functions.
+
+An abstraction of Kirst and Peters' proof would allow the fit of other theorems without the need to project them into $\mathbf{Q}$ or completely rewrite a theorem for a different system; by this, we implement an interface through which the property of incompleteness can be retrieved. Our work is novel in its approach since we work towards a re-instantiated of Popescu and Traytel work using Kleene' separability thesis, further building upon the foundational work of Kirst and Peters; the result will be a general specification to which an axiomatic system must adhere, by which we complement the reusable nature of the current mechanization.
+
+We want to construct an abstraction for any axiomatic system that is also sufficiently strong\footnote{Able to capture all decidable numerical properties.\cite[p.~50]{Smith_2013}}, because ideally we want to capture the incompleteness on any competent system.
+
+Our efforts will go into constructing a generalization of an axiomatic system within the Synthetic Computability Theory for proof of Gödel-Rosser's incompleteness; replacing the $\mathbf{Q}$ instantiation from the Kirst-Peters' mechanization.
+
+\section{Research aim}
+\label{sec:aim}
+
+% The research aim summarises clearly the project intention and must be able
+% to answer the research question.
+% It must be explained how to identify when the research aim has been reached
+% and how evidence can be provided through some evaluation criteria (e.g.,
+% metrics, performance measurements, proven theorems, etc.)
+
+The aim of this research is to develop a generalized and abstract formulation of the Gödel-Rosser incompleteness theorem within the framework of synthetic computability theory. This project seeks to identify the minimal set of properties required for axiomatic systems to support a synthetic computability argument for incompleteness. We want to formalize these properties into a reusable abstract specification.
+
+To achieve this, the research will determine the essential assumptions and construct a generalized incompleteness proof based on these assumptions. This proof will be mechanized in the Coq proof assistant.
+
+The research aim can be considered achieved when four boxes are checked.
+\begin{enumerate}
+    \item A precise and minimal set of axiomatic requirements that define the formal system have been identified.
+    \item A set of $\Sigma_1$-representable $\mu$-recursive functions that represent the Synthetic Computer.
+    \item A generalized Gödel-Rosser incompleteness theorem has been proven within a formally defined abstract framework capturing the required properties.
+    \item The proof has been successfully mechanized and validated in Coq, yielding a complete formal implementation of the framework and theorem
+\end{enumerate}
+
+\section{Methodology}
+\label{sec:methodology}
+% The objectives required to address the research aim must be clearly identified
+% and their content explained (what, why, how).
+% If applicable, experiments have to be identified and described.
+% If required, data sets are identified and it is described how they can be
+% gathered.
+% The objectives, experiments and data sets have to be realistic.
+% If applicable, privacy and ethical issues have to be considered.
+
+% is Q a subset of all math system? --> this question might not be usefull, we want to deduce whether we can set up an abstract system that can seperate our two strong self-halting problems, to achieve Gödel Rosser incompleteness. So we need to find an abstract system that can produce this strong seperability (defined in the paper). We want to get rid of CT_Q (Churses thesis over Q) and the DPRM theorem. How do we do that? We need to find the required properties that make Q a good fit for the current instantiation within the paper.
+
+% What else can we use instead of the DPRM theorem?
+The methodology we consider is firstly conceptual in the sense that through exploration and theoretical reasoning we derive a set of requirements for a formal system within Kirst' and Peters' Synthetic Computer framework; and secondly, our intended formal mechanization will validate the final abstraction.
+
+\paragraph{O1.}
+\textbf{Isolate the properties of the formal system which allow a formal system to be represented in the Synthetic Computer argument for Gödel-Rosser incompleteness}
+Paulson has formalized Gödels theorem in Isabelle/HOL using hereditarily finite set theory (HF), by this deviating from the common instantiation of Peano Arithmetic. What might give some insight is whether this theorem has any similarities to theorems using Peano Arithmetic or any of its siblings. \cite{Paulson_2015}
+
+O'Conner defines the axiom system $\mathbf{NN}$, which shares a couple of axioms with Peano Arithmetic.\cite{O_Connor_2005} Instead of capturing induction it captures axioms that define less than or equal. While this system is quite similar to $\mathbf{Q}$ it gives us another perspective.
+
+We intend to adhere to the same design principles to which Popescu' and Traytel' abstraction adheres.\cite{popescu}  Most importantly we will try to find the minimal necessary assumptions to construct the properties. Furthermore we prefer stronger theorems under fewer assumptions.
+
+\paragraph{O2.}
+\textbf{Construct the $\Sigma_1$-representation of $\mu$-recursive functions that capture the universal machinery $EPF_\mu$.}
+O'Conner uses Godel’s $\beta$-function and the Chinese remainder theorem to show that $\mathbf{NN}$ can represents all primitive recursive functions \footnote{$\mu$-recursive functions are an extension of primitive recursive functions.}.\cite{O_Connor_2005} 
+Paulson created a set of recursive function for his theorem using HF.\cite{Paulson_2015}
+
+We will reuse O'Conner' mechanization of recursive functions and alter them to $\mu$-recursive functions that capture the universal machine. The recursive functions will depend on our abstraction of the formal system in objective 1.
+
+\paragraph{O3.}
+\textbf{Convert our findings into a generalized theorem and mechanize it within Coq.}
+We will further build upon the foundational implementation of Kirst and Peters which can be found here: \url{https://github.com/uds-psl/coq-synthetic-incompleteness}. By deviating from the complex DPRM theorem we simplify the mechanization and therefore stay closer to the Synthetic Computability theory. Additionally we intend to cover the abstraction of our axiomatic formal system.
+
+\section{Planning}
+\label{sec:planning}
+
+% Deliverables/subtasks to attain the objectives have been clearly identified.
+% For each deliverable, the necessary amount of time and the scheduling are
+% clearly indicated (ideally in a Gantt chart).
+% All the resource estimations must be realistically based on the chosen
+% methodology.
+
+% We describe the planning of the objectives from \cref{sec:methodology}.
+% For each objective, we have several deliverables.
+% To attain \Ob{1}, we first find out what fancy stuff is (\D{1}{1})
+% and then will build a fancy-stuff machine (\D{1}{2}).
+% Flying to the moon (objective \Ob{1}) requires a rocket and a pilot.
+% First, we will plan the rocket in \D{2}{1}.
+% Based on these plans, we build the rocket in \D{2}{2} by using the
+% fancy-stuff machine from \D{1}{2}.
+% After that, we train in \D{2}{3} the pilot.
+% Overall, we estimate the project to take 3 years.
+% The detailed duration and scheduling is indicated in \cref{fig:planning-chart}.
+
+We describe the planning of the objectives from \cref{sec:methodology}. For each objective, we have several deliverables.
+\paragraph{\Ob{1}. Identification of the required system properties.}
+
+The first phase focuses on isolating the properties of a formal system that allow it to be represented in the synthetic computability argument for Gödel-Rosser incompleteness.
+
+To begin with, we do literature analysis. Specifically, we study the mechanization of Gödel's incompleteness theorem by Kirst and Peters, as well as Paulson's mechanization in Isabelle/HOL using hereditarily finite set theory and compare it with theorems based on Peano Arithmetic (\D{1}{1}). The deliverable of this task is a structured overview of the properties required by the existing mechanizations.
+
+Based on the literature analysis, we extract the minimal assumptions required for the synthetic computability argument (\D{1}{2}). The result of this step is a list of necessary system properties.
+
+Using this list of assumptions we define an abstract axiomatic framework that captures the required properties (\D{1}{3}). The deliverable of this phase is a formal specification of a system capable of representing the universal machine used in the incompleteness argument.
+
+\paragraph{\Ob{2}. Construct the $\Sigma_1$-representation of $\mu$-recursive functions that capture the universal machinery $EPF_\mu$.}
+The second phase focuses on constructing the $\Sigma_1$-representation of $\mu$-recursive functions that capture the universal machinery ($EPF_\mu$) (\D{2}{1}). We then formalize the current theorem using this representation (\D{2}{2}). The deliverable of this task is the specification of how the $\Sigma_1$-representation of $\mu$-recursive functions can be constructed.
+
+\paragraph{\Ob{3}. Mechanization of the generalized proof.}
+
+The third phase focuses on converting the theoretical findings of \Ob{1} into a generalized proof and implementing this proof with Coq proof assistant.
+
+To start with, we design the structure of the mechanization (\D{3}{1}). In this task we determine how the axiomatic system identified in \D{1}{3} can be represented in Coq. We also determine how the $\Sigma_1$-representation of $\mu$-recursive function can be encoded. The deliverable of the task is a formal design describing the structure of the Coq development and the representation of the system.
+
+Thereafter, we implement the generalized Gödel-Rosser incompleteness proof in Coq.This step builds on the existing implementation by Kirst and Peters (\D{3}{2}). By deviating from the DPRM theorem, we keep the mechanization simpler and closer to the synthetic computability argument. The result is a working Coq implementation of the generalized proof.
+
+Lastly, we clearly document the formalization (\D{3}{3}). We ensure that the abstraction of the axiomatic system is clearly documented. The deliverable is a documented description of the mechanized proof. Finally, we include a buffer period (\D{3}{4}) to accommodate potential delays.
+
+\begin{figure}[H]
+  \centering
+  \begin{ganttproposal}{2}{12}
+    %% If you don't like some settings, you can override them here with
+    %% \ganttset. See the documentation of pgfgantt.
+    \ganttset{
+      y unit chart=0.6cm
+    }
+    \ganttproposalheader{}
+    \ganttgroup[group/.append style={fill=firstcolour}]{
+      \Ob{1}. Identification of the required system properties.}{1}{2} \\
+    \ganttbar[name=literature,bar/.append style={fill=firstcolour}]{
+      \D{1}{1}. Literature analysis}{1}{2} \\
+    \ganttbar[name=assumptions,bar/.append style={fill=firstcolour}]{
+      \D{1}{2}. Comparative analysis}{1}{2} \\ \\
+
+    \ganttgroup[group/.append style={fill=thirdcolour}]{
+      \Ob{2}. Define a set of requirements needed to generalize the arithmetic system. }{2}{12} \\ \\ 
+    \ganttbar[name=literature,bar/.append style={fill=thirdcolour}]{
+      \D{2}{1}. Literature analysis}{2}{3} \\
+    \ganttbar[name=assumptions,bar/.append style={fill=thirdcolour}]{
+      \D{2}{2}. Formalize and experiment with the set of requirements}{3}{6} \\
+     \ganttbar[name=assumptions,bar/.append style={fill=thirdcolour}]{
+      \D{2}{3}. Mechanize the theorems}{6}{11} \\
+    \ganttbar[name=assumptions,bar/.append style={fill=thirdcolour}]{
+      \D{2}{4}. Validation.}{6}{11} \\
+    \ganttbar[name=fbuffer,bar/.append style={fill=thirdcolour}]{
+      \D{2}{5}. Buffer}{11}{12} \\ \\ 
+
+    \ganttgroup[group/.append style={fill=secondcolour}]{
+      \Ob{3}.Construct the general recursive functions that replace the DPRM theorem.}{13}{18} \\ \\
+    \ganttbar[name=formalization,bar/.append style={fill=secondcolour}]{
+      \D{3}{1}. Formalization and experimentation on the design.}{13}{15}\\ \\
+    \ganttbar[name=implementation,bar/.append style={fill=secondcolour}]{
+      \D{3}{2}. Mechanize the general recursive functions.}{13}{16} \\
+    \ganttbar[name=mechs,bar/.append style={fill=secondcolour}]{ 
+      \D{3}{3}. Validation.}{16}{17} \\
+    \ganttbar[name=3buffer,bar/.append style={fill=secondcolour}]{\D{3}{4}. fBuffer.}{17}{18} \\
+      
+    \ganttgroup[group/.append style={fill=fourthcolour}]{
+      \Ob{4}. Documentation and presentation.}{19}{20} 
+
+    %% Extra dependency
+  \end{ganttproposal}
+  \caption{Planning Chart}
+  \label{fig:planning-chart}
+\end{figure}
+
+\section{Risk assessment}
+\label{sec:risk-assessment}
+% The feasibility of the research project has to be assessed.
+% Risks (low-medium-high) for the deliverables, coming from the techniques,
+% infrastructure, etc. are clearly identified.
+% It must be clearly indicated how risks can be mitigated or if there is an
+% alternative approach (another way to attain the objectives; simplified
+% but safer objectives/deliverables, etc.).
+% Is there a Plan B?
+
+As we are concerned with theoretical work there is no risk regarding physical errors. As there is no experiment that can go wrong, or interviews that can not get scheduled. However, because a proof needs to be constructed a precise time estimate is rather difficult to make, thus it could be that a proof is sought for that is impossible to prove, or vice versa, it could be impossible to prove that the prove is impossible to prove. Thus the risk exists and is plausible that the targets set in section \ref{sec:planning}, are not feasible in the allotted time span, or that the time given shall not be enough, such that the time left for writing is not enough. Secondly the system that is needed to be proven is exceptionally hard to prove, thus the risk is rather high. To reduce this risk, extra buffers are build into the planning. 
+
+\section{Impact}
+\label{sec:impact}
+The proof that a formal system for the Gödel-Rosser incompleteness can be represented in the Synthetic Computer argument, also proves that the Synthetic Computer argument also has the properties of undecidability and incompleteness. Thus the Synthetic Computer argument can be used to prove problems that rely on undecidability and incompleteness. 
+
+This would in turn give a new framework to work with undecidability and incompleteness. This will also be used to verify the properties of undecidability and incompleteness as previously described.
+
+If the proof that a formal system for the Gödel-Rosser incompleteness can be represented in the Synthetic Computer argument can be constructed, we prove that a Synthetic Computer can not prove all possible statements in the Computers System. 
+
+\newpage
+\printbibliography
+
+\end{document}

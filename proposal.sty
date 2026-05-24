@@ -1,0 +1,144 @@
+%% Style file for RMCS research proposal
+%% DO NOT CHANGE THIS FILE!
+\ProvidesPackage{proposal}
+
+\RequirePackage{geometry}
+\geometry{
+  margin=30mm,
+  top=25mm,
+  headsep=10mm,
+  bottom=25mm
+}
+
+% Math
+\RequirePackage{lmodern}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{mathtools}
+
+%% Enusure UTF compatibility
+\RequirePackage{ifxetex,ifluatex}
+\RequirePackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage[utf8]{inputenc}
+  \RequirePackage{textcomp} % provides euro and other symbols
+
+\else % if luatex or xelatex
+  \RequirePackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+
+% Set PDF options etc.
+\RequirePackage{url}
+\PassOptionsToPackage{%
+  unicode=true,
+  breaklinks=true,
+  bookmarks=true,
+  bookmarksnumbered=true,
+  linkbordercolor={1 1 1},
+  pdfborder={0 0 0},
+  pdfpagemode=UseOutlines
+}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{%
+  noabbrev
+}{cleveref}
+\urlstyle{same}  % don't use monospace font for urls
+
+% Creating commands
+\RequirePackage{xparse}
+
+% Colour
+\RequirePackage[usenames]{xcolor}
+
+% Figures
+\RequirePackage{graphicx}
+
+% Lists
+\RequirePackage{enumitem}
+
+% Control texttable environment and other floats
+\RequirePackage{float}
+
+% Drawing
+\RequirePackage{tikz}
+\RequirePackage{pgfgantt}
+
+\newcommand*{\groupname}{Group 4}
+%% \SetTitleAndGroup{<Title>}{<Group>}{<Authors>}
+\NewDocumentCommand{\SetTitleAndGroup}{m m m}{
+  \title{\textsc{#1}}
+  \author{#2: #3}
+  \renewcommand*{\groupname}{#2}
+  \hypersetup{
+    pdfauthor={#2 (#3)},
+    pdftitle={RMCS 2026 Proposal: #1}
+  }
+}
+
+\RequirePackage[headsepline]{scrlayer-scrpage}
+\clearpairofpagestyles
+\ohead{\groupname}
+\chead{\pagemark}
+\ihead{RMCS 2026 Proposal}
+
+
+
+% Typesetting objectives and deliverables
+\NewDocumentCommand{\Ob}{m}{\textbf{O#1}}
+\NewDocumentCommand{\D}{m m}{\textbf{D#1.#2}}
+
+%% Colours used in the Gantt-chart
+\colorlet{firstcolour}{red!50}
+\colorlet{secondcolour}{green!50}
+\colorlet{thirdcolour}{yellow!50}
+\colorlet{fourthcolour}{pink!50}
+
+% Creating Gantt chart
+% \begin{ganttproposal}{<No. of years>}{<Subdivision of years (e.g., 4 four quarters)>}
+\NewDocumentEnvironment{ganttproposal}{m m}{
+  % Save arguments for internal use
+  \newcounter{ganttproposalyears}
+  \newcounter{ganttproposalparts}
+  \setcounter{ganttproposalyears}{#1}
+  \setcounter{ganttproposalparts}{#2}
+  %% Calculate size
+  \pgfmathparse{int(\value{ganttproposalyears} * \value{ganttproposalparts})}
+  \begin{ganttchart}{1}{\pgfmathresult}
+    \ganttset{
+      vgrid
+      , x unit=5mm
+      , y unit title=5mm
+      , y unit chart=5mm
+      , bar height = .3
+      , bar top shift = .2
+      , bar label font = {\small}
+      , group top shift = .2
+      , group/.append style={draw=black}
+      , group label font = {\bfseries\small}
+      , bar label text={\hspace*{5pt} \strut##1}
+      , group label text={\strut##1}
+      , milestone label text={\hspace*{5pt} \strut##1}
+      , bar label node/.append style={text width=7cm}
+      , group label node/.append style={text width=7cm}
+      , milestone label node/.append style={text width=7cm}
+    }
+}{
+  \end{ganttchart}
+}
+
+%% Can be used inside ganttproposal to typeset the header.
+\NewDocumentCommand{\ganttproposalheader}{}{
+  % List years
+  \gantttitlelist[
+  title list options=%
+  {var=\y, evaluate=\y as \x using "Year \y"}%
+  ]{1,...,\value{ganttproposalyears}}{\value{ganttproposalparts}} \\
+  % List subdivisions
+  \pgfmathparse{int((\value{ganttproposalyears} * \value{ganttproposalparts}) - 1)}
+  \gantttitlelist[
+  title list options=%
+  {var=\y, evaluate=\y as \x using {int(mod(\y,\value{ganttproposalparts}) + 1)}}%
+  ]{0,...,\pgfmathresult}{1} \\
+}
